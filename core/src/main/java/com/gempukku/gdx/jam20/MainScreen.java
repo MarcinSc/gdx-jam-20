@@ -176,16 +176,16 @@ public class MainScreen implements Screen {
                 });
         editorTable.add(backButton).left().colspan(2).width(150).pad(10).height(50).row();
 
-        Label grubsLabel = new Label("Number of grubs to collect", skin);
-        grubsLabel.setAlignment(Align.right);
+        Label grubsLabel = new Label("Number of grubs to collect", skin, "fixed");
         editorTable.add(grubsLabel);
 
-        TextField collectibleField = new TextField("1", skin);
-        editorTable.add(collectibleField);
+        TextField collectibleField = new TextField("1", skin, "fixed");
+        collectibleField.setAlignment(Align.right);
+        editorTable.add(collectibleField).left().pad(5);
 
         editorTable.row();
 
-        editorTable.add(new Label("Level data", skin)).colspan(2).row();
+        editorTable.add(new Label("Level data", skin, "fixed")).colspan(2).row();
 
         editorTable.add(new Label("[P] - player\n[G] - grub\n[W] - wall\n[D] - dirt\n[F] - fox\n[X] - exit\n[ ] - empty", skin, "fixed"));
 
