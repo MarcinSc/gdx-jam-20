@@ -34,7 +34,8 @@ public class MainScreen implements Screen {
             "tutorial/level6.level"
     };
     private static final String[] campaign = new String[]{
-            "campaign/level1.level"
+            "campaign/level1.level",
+            "campaign/level2.level"
     };
 
     private Skin skin;
@@ -187,7 +188,7 @@ public class MainScreen implements Screen {
 
         editorTable.add(new Label("Level data", skin, "fixed")).colspan(2).row();
 
-        editorTable.add(new Label("[P] - player\n[G] - grub\n[W] - wall\n[D] - dirt\n[F] - fox\n[X] - exit\n[ ] - empty", skin, "fixed"));
+        editorTable.add(new Label("[P] - player\n[G] - grub\n[O] - stone\n[W] - wall\n[D] - dirt\n[F] - fox\n[X] - exit\n[ ] - empty", skin, "fixed"));
 
         TextArea textArea = new TextArea("", skin, "fixed");
         editorTable.add(textArea).grow().row();

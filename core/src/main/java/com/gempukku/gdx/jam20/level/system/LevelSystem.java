@@ -84,6 +84,8 @@ public class LevelSystem implements CameraFocus {
         for (LevelObject[] rowData : levelData) {
             int x = 0;
             for (LevelObject levelObject : rowData) {
+                if (levelObject == null)
+                    System.out.println("Ouch!");
                 LevelObjectSprite sprite = spawnObject(levelObject, x, gameLevel.getHeight() - y);
                 if (sprite != null) {
                     if (levelObject == LevelObject.Player) {

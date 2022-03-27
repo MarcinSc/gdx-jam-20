@@ -145,6 +145,7 @@ public class GameLevel {
     private static LevelObject getLevelObject(char c) {
         switch (c) {
             case ' ':
+            case 'A':
                 return LevelObject.Air;
             case 'D':
                 return LevelObject.Dirt;

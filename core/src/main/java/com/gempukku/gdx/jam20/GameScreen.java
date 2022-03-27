@@ -35,7 +35,7 @@ import com.gempukku.libgdx.lib.camera2d.constraint.SnapToWindowCameraConstraint;
 
 public class GameScreen implements Screen {
     private static final float TILE_SIZE = 48f;
-    private static final float MAJOR_TICK = 0.25f;
+    private static final float MAJOR_TICK = 0.20f;
 
     private float lastMajorTick = -MAJOR_TICK;
 
