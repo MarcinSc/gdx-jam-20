@@ -172,11 +172,10 @@ public class LevelSystem implements CameraFocus {
     }
 
     private void processPlayer() {
-        LastPlayerInput lastPlayerInput = inputSystem.getLastPlayerInput();
-        InputSystem.Direction requestedDirection = lastPlayerInput.getDirection();
+        InputSystem.Direction requestedDirection = inputSystem.getPlayerInput();
+        inputSystem.resetPlayerInput();
         if (requestedDirection != null) {
             processPlayerMovement(requestedDirection);
-            lastPlayerInput.setDirection(null);
         }
     }
 
@@ -288,12 +287,14 @@ public class LevelSystem implements CameraFocus {
         if (spriteAtPosition == null || spriteAtPosition.getType().canBeEntered()) {
             if (spriteAtPosition != null)
                 processPlayerEntering(spriteAtPosition);
+            playerSprite.getPropertyContainer().setValue("Texture", textureAtlas.findRegion("player-" + direction.getName()));
             playerSprite.setPosition(newX, newY);
         } else if (spriteAtPosition.getType().canBeMoved()) {
             int otherX = newX + direction.getX();
             int otherY = newY + direction.getY();
             if (getSpriteAt(otherX, otherY) == null) {
                 spriteAtPosition.setPosition(otherX, otherY);
+                playerSprite.getPropertyContainer().setValue("Texture", textureAtlas.findRegion("player-" + direction.getName()));
                 playerSprite.setPosition(newX, newY);
             }
         }

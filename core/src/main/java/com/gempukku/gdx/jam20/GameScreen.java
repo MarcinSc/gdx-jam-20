@@ -90,7 +90,7 @@ public class GameScreen implements Screen {
         loadPipeline();
         loadTextureAtlas();
 
-        inputSystem = new InputSystem(timeKeeper);
+        inputSystem = new InputSystem();
         levelSystem = new LevelSystem(timeKeeper, inputSystem, soundSystem, pipelineRenderer);
         focusCameraController = new FocusCameraController(camera, levelSystem,
                 new SnapToWindowCameraConstraint(new Rectangle(0.45f, 0.45f, 0.1f, 0.1f), new Vector2(0.1f, 0.1f)),

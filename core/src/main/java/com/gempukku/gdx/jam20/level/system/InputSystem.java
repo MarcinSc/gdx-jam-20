@@ -2,20 +2,21 @@ package com.gempukku.gdx.jam20.level.system;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.gempukku.libgdx.graph.time.TimeProvider;
 
 public class InputSystem {
     public enum Direction {
-        Up(0, 1, Input.Keys.UP, Input.Keys.W),
-        Down(0, -1, Input.Keys.DOWN, Input.Keys.S),
-        Right(1, 0,Input.Keys.RIGHT, Input.Keys.D),
-        Left(-1, 0, Input.Keys.LEFT, Input.Keys.A);
+        Up("up", 0, 1, Input.Keys.UP, Input.Keys.W),
+        Down("down", 0, -1, Input.Keys.DOWN, Input.Keys.S),
+        Right("right", 1, 0, Input.Keys.RIGHT, Input.Keys.D),
+        Left("left", -1, 0, Input.Keys.LEFT, Input.Keys.A);
 
         private int[] keys;
+        private String name;
         private int x;
         private int y;
 
-        Direction(int x, int y, int... keys) {
+        Direction(String name, int x, int y, int... keys) {
+            this.name = name;
             this.x = x;
             this.y = y;
             this.keys = keys;
@@ -29,38 +30,51 @@ public class InputSystem {
             return y;
         }
 
-        int[] getKeys() {
+        public int[] getKeys() {
             return keys;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 
     private boolean pauseRequested;
-    private TimeProvider timeProvider;
-    private LastPlayerInput lastPlayerInput = new LastPlayerInput();
 
-    public InputSystem(TimeProvider timeProvider) {
-        this.timeProvider = timeProvider;
-    }
+    private Direction memorizedDirection;
+    private Direction pressedDirection;
+    private boolean pressedSinceReset;
 
     public void update() {
         pauseRequested = Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE);
 
-        Direction pressedDirection = getPressedDirection();
-        if (pressedDirection != null) {
-            lastPlayerInput.setTime(timeProvider.getTime());
-            lastPlayerInput.setDirection(pressedDirection);
-        }
+        Direction lastPressedDirection = pressedDirection;
+        pressedDirection = getPressedDirection();
+        if (lastPressedDirection == null && pressedDirection != null)
+            pressedSinceReset = true;
+
+        if (lastPressedDirection != null && pressedDirection == null)
+            memorizedDirection = lastPressedDirection;
     }
 
     public boolean isPauseRequested() {
         return pauseRequested;
     }
 
-    public LastPlayerInput getLastPlayerInput() {
-        return lastPlayerInput;
+    public void resetPlayerInput() {
+        pressedSinceReset = false;
+        memorizedDirection = null;
     }
 
-    private Direction getPressedDirection() {
+    public Direction getPlayerInput() {
+        if (pressedDirection != null)
+            return pressedDirection;
+        if (pressedSinceReset)
+            return memorizedDirection;
+        return null;
+    }
+
+    private static Direction getPressedDirection() {
         Direction pressedDirection = null;
         for (Direction value : Direction.values()) {
             if (isKeyPressed(value.getKeys())) {
@@ -75,7 +89,7 @@ public class InputSystem {
         return pressedDirection;
     }
 
-    private boolean isKeyPressed(int... keys) {
+    private static boolean isKeyPressed(int... keys) {
         for (int key : keys) {
             if (Gdx.input.isKeyPressed(key))
                 return true;
