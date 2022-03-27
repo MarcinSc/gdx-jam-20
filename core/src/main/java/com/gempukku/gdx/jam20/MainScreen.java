@@ -5,13 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -51,6 +51,7 @@ public class MainScreen implements Screen {
 
         assetManager = new AssetManager();
         assetManager.load("texture/ui.atlas", TextureAtlas.class);
+        assetManager.load("images/title.png", Texture.class);
         assetManager.finishLoading();
 
         TextureAtlas uiTextureAtlas = assetManager.get("texture/ui.atlas", TextureAtlas.class);
@@ -186,9 +187,9 @@ public class MainScreen implements Screen {
 
         editorTable.add(new Label("Level data", skin)).colspan(2).row();
 
-        editorTable.add(new Label("[P] - player\n[G] - grub\n[W] - wall\n[D] - dirt\n[F] - fox\n[X] - exit\n[ ] - empty", skin));
+        editorTable.add(new Label("[P] - player\n[G] - grub\n[W] - wall\n[D] - dirt\n[F] - fox\n[X] - exit\n[ ] - empty", skin, "fixed"));
 
-        TextArea textArea = new TextArea("", skin);
+        TextArea textArea = new TextArea("", skin, "fixed");
         editorTable.add(textArea).grow().row();
 
         Label validationLabel = new Label("", skin);
@@ -200,7 +201,7 @@ public class MainScreen implements Screen {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
                         int numberOfCollectibles = Integer.parseInt(collectibleField.getText());
-                        LevelObject[][] levelData = GameLevel.createUnvalidatedLevelData(textArea.getText());
+                        LevelObject[][] levelData = GameLevel.createUnvalidatedLevelData(textArea.getText().toUpperCase());
 
                         GameLevel gameLevel = new GameLevel("Test", numberOfCollectibles, 3600, levelData);
                         gameScreen.loadLevel(gameLevel);
@@ -327,6 +328,8 @@ public class MainScreen implements Screen {
     }
 
     private void createMainTable(TextureAtlas textureAtlas, Table mainTable, Table levelsTable, Table settingsTable, Table editorTable) {
+        Image titleImage = new Image(assetManager.get("images/title.png", Texture.class));
+
         TextButton startButton = new TextButton("Start", skin, "menu");
         startButton.addListener(
                 new ChangeListener() {
@@ -366,10 +369,14 @@ public class MainScreen implements Screen {
                     }
                 });
 
+        Label label = new Label("Use WASD or arrow keys to move in game", skin, "menu");
+
+        mainTable.add(titleImage).pad(20).row();
         mainTable.add(startButton).width(250).height(50).pad(10).row();
         mainTable.add(settingsButton).width(250).height(50).pad(10).row();
         mainTable.add(editorButton).width(250).height(50).pad(10).row();
         mainTable.add(exit).width(250).height(50).pad(10).row();
+        mainTable.add(label).padTop(50).row();
     }
 
     @Override
