@@ -12,7 +12,7 @@ public enum LevelObject {
 
     Stone("stone", false, true),
 
-    Player("player-right", false, false, true),
+    Player("player-down", false, false, true),
     Fox("fox", false, false, true, true);
 
     private final boolean canBeEntered;

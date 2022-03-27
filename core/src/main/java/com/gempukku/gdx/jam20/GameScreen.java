@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.gempukku.gdx.jam20.camera.SceneCameraConstraintFix;
 import com.gempukku.gdx.jam20.level.GameLevel;
 import com.gempukku.gdx.jam20.level.system.InputSystem;
 import com.gempukku.gdx.jam20.level.system.LevelSystem;
@@ -64,6 +65,7 @@ public class GameScreen implements Screen {
     private Label finishLabel;
     private TextButton retryButton;
     private AssetManager assetManager;
+    private SceneCameraConstraintFix sceneCameraConstraint;
 
     public GameScreen(Game game, SoundSystem soundSystem, Screen exitScreen, Skin skin) {
         this.game = game;
@@ -90,12 +92,14 @@ public class GameScreen implements Screen {
         loadPipeline();
         loadTextureAtlas();
 
+        sceneCameraConstraint = new SceneCameraConstraintFix(new Rectangle(0, 0, 1, 1));
+
         inputSystem = new InputSystem();
         levelSystem = new LevelSystem(timeKeeper, inputSystem, soundSystem, pipelineRenderer);
         focusCameraController = new FocusCameraController(camera, levelSystem,
                 new SnapToWindowCameraConstraint(new Rectangle(0.45f, 0.45f, 0.1f, 0.1f), new Vector2(0.1f, 0.1f)),
-                new LockedToWindowCameraConstraint(new Rectangle(0.4f, 0.4f, 0.2f, 0.2f)));
-        //new SceneCameraConstraint(new Rectangle(0, 0, gameLevel.getWidth(), gameLevel.getHeight())));
+                new LockedToWindowCameraConstraint(new Rectangle(0.4f, 0.4f, 0.2f, 0.2f)),
+                sceneCameraConstraint);
     }
 
     private void initializeFinishStage() {
@@ -196,6 +200,7 @@ public class GameScreen implements Screen {
             levelSystem.unloadLevel();
 
         levelSystem.loadLevel(gameLevel, textureAtlas);
+        sceneCameraConstraint.setBounds(new Rectangle(-0.5f, 0.5f, gameLevel.getWidth(), gameLevel.getHeight()));
     }
 
     private String getTimeString(int time) {
