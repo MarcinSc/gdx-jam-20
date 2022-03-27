@@ -12,11 +12,9 @@ public class LevelObjectSprite extends CommonPropertiesSpriteAdapter {
     private int y;
     private LevelObject type;
 
-    public LevelObjectSprite(int x, int y, LevelObject type, GraphSprites graphSprites) {
+    public LevelObjectSprite(LevelObject type, GraphSprites graphSprites) {
         super(graphSprites);
 
-        this.x = x;
-        this.y = y;
         this.type = type;
     }
 
@@ -33,7 +31,7 @@ public class LevelObjectSprite extends CommonPropertiesSpriteAdapter {
         this.y = y;
 
         Vector3 position = getPosition();
-        position.set(x, y, position.z);
+        position.set(x + 0.5f, y + 0.5f, position.z);
         updateSprite();
     }
 

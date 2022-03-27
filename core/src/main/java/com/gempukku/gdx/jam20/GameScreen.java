@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gempukku.gdx.jam20.camera.SceneCameraConstraintFix;
+import com.gempukku.gdx.jam20.camera.AlignUnderflowCameraConstraint;
 import com.gempukku.gdx.jam20.level.GameLevel;
 import com.gempukku.gdx.jam20.level.system.InputSystem;
 import com.gempukku.gdx.jam20.level.system.LevelSystem;
@@ -29,10 +29,12 @@ import com.gempukku.libgdx.graph.pipeline.RenderOutputs;
 import com.gempukku.libgdx.graph.plugin.sprites.SpritesPluginRuntimeInitializer;
 import com.gempukku.libgdx.graph.plugin.ui.UIPluginPublicData;
 import com.gempukku.libgdx.graph.plugin.ui.UIPluginRuntimeInitializer;
+import com.gempukku.libgdx.graph.util.Alignment;
 import com.gempukku.libgdx.graph.util.DefaultTimeKeeper;
 import com.gempukku.libgdx.lib.camera2d.FocusCameraController;
+import com.gempukku.libgdx.lib.camera2d.constraint.LerpToWindowCameraConstraint;
 import com.gempukku.libgdx.lib.camera2d.constraint.LockedToWindowCameraConstraint;
-import com.gempukku.libgdx.lib.camera2d.constraint.SnapToWindowCameraConstraint;
+import com.gempukku.libgdx.lib.camera2d.constraint.SceneCameraConstraint;
 
 public class GameScreen implements Screen {
     private static final float TILE_SIZE = 64f;
@@ -65,7 +67,8 @@ public class GameScreen implements Screen {
     private Label finishLabel;
     private TextButton retryButton;
     private AssetManager assetManager;
-    private SceneCameraConstraintFix sceneCameraConstraint;
+    private SceneCameraConstraint sceneCameraConstraint;
+    private AlignUnderflowCameraConstraint alignUnderflowCameraConstraint;
 
     public GameScreen(Game game, SoundSystem soundSystem, Screen exitScreen, Skin skin) {
         this.game = game;
@@ -92,14 +95,16 @@ public class GameScreen implements Screen {
         loadPipeline();
         loadTextureAtlas();
 
-        sceneCameraConstraint = new SceneCameraConstraintFix(new Rectangle(0, 0, 1, 1));
+        sceneCameraConstraint = new SceneCameraConstraint(new Rectangle(0, 0, 1, 1));
+        alignUnderflowCameraConstraint = new AlignUnderflowCameraConstraint(new Rectangle(0, 0, 1, 1), Alignment.center);
 
         inputSystem = new InputSystem();
         levelSystem = new LevelSystem(timeKeeper, inputSystem, soundSystem, pipelineRenderer);
         focusCameraController = new FocusCameraController(camera, levelSystem,
-                new SnapToWindowCameraConstraint(new Rectangle(0.45f, 0.45f, 0.1f, 0.1f), new Vector2(0.1f, 0.1f)),
-                new LockedToWindowCameraConstraint(new Rectangle(0.4f, 0.4f, 0.2f, 0.2f)),
-                sceneCameraConstraint);
+                new LerpToWindowCameraConstraint(new Rectangle(0.45f, 0.45f, 0.1f, 0.1f), new Vector2(5f, 5f), new Vector2(10f, 10f)),
+                new LockedToWindowCameraConstraint(new Rectangle(0.35f, 0.4f, 0.3f, 0.2f)),
+                sceneCameraConstraint,
+                alignUnderflowCameraConstraint);
     }
 
     private void initializeFinishStage() {
@@ -200,7 +205,8 @@ public class GameScreen implements Screen {
             levelSystem.unloadLevel();
 
         levelSystem.loadLevel(gameLevel, textureAtlas);
-        sceneCameraConstraint.setBounds(new Rectangle(-0.5f, 0.5f, gameLevel.getWidth(), gameLevel.getHeight()));
+        sceneCameraConstraint.setBounds(new Rectangle(0f, 0f, gameLevel.getWidth(), gameLevel.getHeight()));
+        alignUnderflowCameraConstraint.setBounds(new Rectangle(0f, 0f, gameLevel.getWidth(), gameLevel.getHeight()));
     }
 
     private String getTimeString(int time) {

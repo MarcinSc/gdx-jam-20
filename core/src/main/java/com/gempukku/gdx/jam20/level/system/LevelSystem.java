@@ -84,9 +84,7 @@ public class LevelSystem implements CameraFocus {
         for (LevelObject[] rowData : levelData) {
             int x = 0;
             for (LevelObject levelObject : rowData) {
-                if (levelObject == null)
-                    System.out.println("Ouch!");
-                LevelObjectSprite sprite = spawnObject(levelObject, x, gameLevel.getHeight() - y);
+                LevelObjectSprite sprite = spawnObject(levelObject, x, gameLevel.getHeight() - y - 1);
                 if (sprite != null) {
                     if (levelObject == LevelObject.Player) {
                         playerSprite = sprite;
@@ -113,7 +111,7 @@ public class LevelSystem implements CameraFocus {
 
     private LevelObjectSprite spawnObject(LevelObject levelObject, int x, int y) {
         if (levelObject.isSpawnSprite()) {
-            LevelObjectSprite sprite = new LevelObjectSprite(x, y, levelObject, graphSprites);
+            LevelObjectSprite sprite = new LevelObjectSprite(levelObject, graphSprites);
             sprite.setPosition(x, y);
             TextureAtlas.AtlasRegion textureRegion = textureAtlas.findRegion(levelObject.getSpriteRegionName());
             sprite.getPropertyContainer().setValue("Texture", textureRegion);
@@ -291,7 +289,8 @@ public class LevelSystem implements CameraFocus {
                 processPlayerEntering(spriteAtPosition);
             playerSprite.getPropertyContainer().setValue("Texture", textureAtlas.findRegion("player-" + direction.getName()));
             playerSprite.setPosition(newX, newY);
-        } else if (spriteAtPosition.getType().canBeMoved()) {
+        } else if (spriteAtPosition.getType().canBeMoved() &&
+                (direction == Left || direction == Right)) {
             int otherX = newX + direction.getX();
             int otherY = newY + direction.getY();
             if (getSpriteAt(otherX, otherY) == null) {
